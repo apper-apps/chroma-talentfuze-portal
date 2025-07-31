@@ -18,7 +18,7 @@ class MatchService {
     const prepared = { ...data };
     const lookupFields = ['roleId', 'vaId', 'Owner', 'CreatedBy', 'ModifiedBy'];
     
-    lookupFields.forEach(fieldName => {
+lookupFields.forEach(fieldName => {
       if (prepared[fieldName] !== undefined && prepared[fieldName] !== null) {
         // Handle both object and direct ID inputs
         prepared[fieldName] = parseInt(
@@ -27,7 +27,7 @@ class MatchService {
       }
     });
     
-    return prepared;
+return prepared;
   }
 
   async getAll() {
