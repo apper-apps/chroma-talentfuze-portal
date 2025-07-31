@@ -5,7 +5,7 @@ class MatchService {
   }
 
   // Initialize ApperClient
-  getApperClient() {
+getApperClient() {
     const { ApperClient } = window.ApperSDK;
     return new ApperClient({
       apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
@@ -15,15 +15,19 @@ class MatchService {
 
   // Convert lookup fields for create/update operations
   prepareLookupFields(data) {
-    const prepared = {...data};
-    this.lookupFields.forEach(fieldName => {
+    const prepared = { ...data };
+    const lookupFields = ['roleId', 'vaId', 'Owner', 'CreatedBy', 'ModifiedBy'];
+    
+    lookupFields.forEach(fieldName => {
       if (prepared[fieldName] !== undefined && prepared[fieldName] !== null) {
+        // Handle both object and direct ID inputs
         prepared[fieldName] = parseInt(
           prepared[fieldName]?.Id || prepared[fieldName]
         );
       }
     });
-    return prepared;
+    
+return prepared;
   }
 
   async getAll() {
