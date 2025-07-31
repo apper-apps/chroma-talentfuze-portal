@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
-
+import { AuthContext } from "../../App";
 const Header = ({ userType = "client" }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -63,7 +63,7 @@ const Header = ({ userType = "client" }) => {
             ))}
           </nav>
           
-          {/* User Actions */}
+{/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <Button
               variant="primary"
@@ -72,6 +72,17 @@ const Header = ({ userType = "client" }) => {
             >
               <ApperIcon name="Plus" size={16} className="mr-2" />
               {userType === "client" ? "New Role" : "Complete Profile"}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                const { logout } = useContext(AuthContext);
+                logout();
+              }}
+            >
+              <ApperIcon name="LogOut" size={16} className="mr-2" />
+              Logout
             </Button>
           </div>
           
@@ -104,7 +115,7 @@ const Header = ({ userType = "client" }) => {
                   <span>{item.name}</span>
                 </Link>
               ))}
-              <div className="pt-4 border-t border-gray-200">
+<div className="pt-4 border-t border-gray-200 space-y-2">
                 <Button
                   variant="primary"
                   size="sm"
@@ -116,6 +127,19 @@ const Header = ({ userType = "client" }) => {
                 >
                   <ApperIcon name="Plus" size={16} className="mr-2" />
                   {userType === "client" ? "New Role" : "Complete Profile"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    const { logout } = useContext(AuthContext);
+                    setIsMobileMenuOpen(false);
+                    logout();
+                  }}
+                >
+                  <ApperIcon name="LogOut" size={16} className="mr-2" />
+                  Logout
                 </Button>
               </div>
             </nav>

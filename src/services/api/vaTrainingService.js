@@ -1,79 +1,340 @@
-import vaTrainingData from '@/services/mockData/vaTraining.json';
-
 class VATrainingService {
   constructor() {
-    this.trainings = [...vaTrainingData];
+    this.tableName = 'va_training';
+    this.lookupFields = ['Owner', 'CreatedBy', 'ModifiedBy', 'vaId'];
   }
 
-  delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  // Initialize ApperClient
+  getApperClient() {
+    const { ApperClient } = window.ApperSDK;
+    return new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+  }
+
+  // Convert lookup fields for create/update operations
+  prepareLookupFields(data) {
+    const prepared = {...data};
+    this.lookupFields.forEach(fieldName => {
+      if (prepared[fieldName] !== undefined && prepared[fieldName] !== null) {
+        prepared[fieldName] = parseInt(
+          prepared[fieldName]?.Id || prepared[fieldName]
+        );
+      }
+    });
+    return prepared;
   }
 
   async getAll() {
-    await this.delay(200);
-    return this.trainings.map(training => ({ ...training }));
+    try {
+      const apperClient = this.getApperClient();
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "CreatedOn" } },
+          { field: { Name: "CreatedBy" } },
+          { field: { Name: "ModifiedOn" } },
+          { field: { Name: "ModifiedBy" } },
+          { field: { Name: "courseTitle" } },
+          { field: { Name: "provider" } },
+          { field: { Name: "status" } },
+          { field: { Name: "completionDate" } },
+          { field: { Name: "duration" } },
+          { field: { Name: "certificateUrl" } },
+          { field: { Name: "skills" } },
+          { field: { Name: "startDate" } },
+          { field: { Name: "progress" } },
+          { field: { Name: "vaId" } }
+        ],
+        orderBy: [
+          { fieldName: "CreatedOn", sorttype: "DESC" }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data || [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching VA training records:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      throw error;
+    }
   }
 
   async getById(id) {
-    await this.delay(150);
-    const training = this.trainings.find(t => t.Id === parseInt(id));
-    if (!training) {
-      throw new Error("Training record not found");
+    try {
+      const apperClient = this.getApperClient();
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "CreatedOn" } },
+          { field: { Name: "CreatedBy" } },
+          { field: { Name: "ModifiedOn" } },
+          { field: { Name: "ModifiedBy" } },
+          { field: { Name: "courseTitle" } },
+          { field: { Name: "provider" } },
+          { field: { Name: "status" } },
+          { field: { Name: "completionDate" } },
+          { field: { Name: "duration" } },
+          { field: { Name: "certificateUrl" } },
+          { field: { Name: "skills" } },
+          { field: { Name: "startDate" } },
+          { field: { Name: "progress" } },
+          { field: { Name: "vaId" } }
+        ]
+      };
+
+      const response = await apperClient.getRecordById(this.tableName, id, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching VA training with ID ${id}:`, error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      throw error;
     }
-    return { ...training };
   }
 
   async getByVAId(vaId) {
-    await this.delay(200);
-    return this.trainings
-      .filter(t => t.vaId === parseInt(vaId))
-      .map(t => ({ ...t }))
-      .sort((a, b) => new Date(b.completionDate || b.startDate) - new Date(a.completionDate || a.startDate));
+    try {
+      const apperClient = this.getApperClient();
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "CreatedOn" } },
+          { field: { Name: "CreatedBy" } },
+          { field: { Name: "ModifiedOn" } },
+          { field: { Name: "ModifiedBy" } },
+          { field: { Name: "courseTitle" } },
+          { field: { Name: "provider" } },
+          { field: { Name: "status" } },
+          { field: { Name: "completionDate" } },
+          { field: { Name: "duration" } },
+          { field: { Name: "certificateUrl" } },
+          { field: { Name: "skills" } },
+          { field: { Name: "startDate" } },
+          { field: { Name: "progress" } },
+          { field: { Name: "vaId" } }
+        ],
+        where: [
+          {
+            FieldName: "vaId",
+            Operator: "EqualTo",
+            Values: [parseInt(vaId)]
+          }
+        ],
+        orderBy: [
+          { fieldName: "completionDate", sorttype: "DESC" },
+          { fieldName: "startDate", sorttype: "DESC" }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data || [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching VA training by VA ID:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      throw error;
+    }
   }
 
   async create(trainingData) {
-    await this.delay(300);
-    const newTraining = {
-      Id: Math.max(...this.trainings.map(t => t.Id), 0) + 1,
-      ...trainingData
-    };
-    this.trainings.push(newTraining);
-    return { ...newTraining };
+    try {
+      const apperClient = this.getApperClient();
+      
+      // Only include Updateable fields for create
+      const updateableData = {
+        Name: trainingData.Name || trainingData.courseTitle,
+        Tags: trainingData.Tags || '',
+        courseTitle: trainingData.courseTitle,
+        provider: trainingData.provider,
+        status: trainingData.status || 'enrolled',
+        completionDate: trainingData.completionDate,
+        duration: parseInt(trainingData.duration),
+        certificateUrl: trainingData.certificateUrl || '',
+        skills: Array.isArray(trainingData.skills) ? trainingData.skills.join(',') : trainingData.skills,
+        startDate: trainingData.startDate,
+        progress: parseInt(trainingData.progress || 0),
+        vaId: parseInt(trainingData.vaId)
+      };
+
+      const preparedData = this.prepareLookupFields(updateableData);
+      
+      const params = {
+        records: [preparedData]
+      };
+
+      const response = await apperClient.createRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create VA training ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              throw new Error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) throw new Error(record.message);
+          });
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating VA training:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      throw error;
+    }
   }
 
   async update(id, trainingData) {
-    await this.delay(250);
-    const index = this.trainings.findIndex(t => t.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Training record not found");
+    try {
+      const apperClient = this.getApperClient();
+      
+      // Only include Updateable fields for update
+      const updateableData = {
+        Id: parseInt(id),
+        Name: trainingData.Name || trainingData.courseTitle,
+        Tags: trainingData.Tags || '',
+        courseTitle: trainingData.courseTitle,
+        provider: trainingData.provider,
+        status: trainingData.status,
+        completionDate: trainingData.completionDate,
+        duration: parseInt(trainingData.duration),
+        certificateUrl: trainingData.certificateUrl || '',
+        skills: Array.isArray(trainingData.skills) ? trainingData.skills.join(',') : trainingData.skills,
+        startDate: trainingData.startDate,
+        progress: parseInt(trainingData.progress || 0),
+        vaId: parseInt(trainingData.vaId)
+      };
+
+      const preparedData = this.prepareLookupFields(updateableData);
+      
+      const params = {
+        records: [preparedData]
+      };
+
+      const response = await apperClient.updateRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update VA training ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              throw new Error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) throw new Error(record.message);
+          });
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating VA training:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      throw error;
     }
-    
-    this.trainings[index] = {
-      ...this.trainings[index],
-      ...trainingData,
-      Id: parseInt(id)
-    };
-    
-    return { ...this.trainings[index] };
   }
 
   async delete(id) {
-    await this.delay(200);
-    const index = this.trainings.findIndex(t => t.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Training record not found");
+    try {
+      const apperClient = this.getApperClient();
+      
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await apperClient.deleteRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to delete VA training ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          
+          failedRecords.forEach(record => {
+            if (record.message) throw new Error(record.message);
+          });
+        }
+        
+        return response.results.filter(result => result.success).length > 0;
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting VA training:", error?.response?.data?.message);
+      } else {
+        console.error(error.message);
+      }
+      throw error;
     }
-    
-    this.trainings.splice(index, 1);
-    return true;
   }
 
   async getTrainingOpportunities() {
-    await this.delay(200);
+    // Mock implementation for training opportunities
+    // In a real application, this might come from another table or external API
     return [
       {
         Id: 'opp-1',
-        title: 'Advanced CRM Management',
+        courseTitle: 'Advanced CRM Management',
         provider: 'TalentFuze Academy',
         duration: 16,
         skills: ['CRM Management', 'Sales Process', 'Customer Relations'],
@@ -82,7 +343,7 @@ class VATrainingService {
       },
       {
         Id: 'opp-2',
-        title: 'Digital Marketing Mastery',
+        courseTitle: 'Digital Marketing Mastery',
         provider: 'Marketing Institute',
         duration: 24,
         skills: ['Digital Marketing', 'SEO', 'Content Strategy'],
@@ -91,7 +352,7 @@ class VATrainingService {
       },
       {
         Id: 'opp-3',
-        title: 'Project Management Fundamentals',
+        courseTitle: 'Project Management Fundamentals',
         provider: 'Professional Development Corp',
         duration: 20,
         skills: ['Project Management', 'Team Leadership', 'Planning'],
