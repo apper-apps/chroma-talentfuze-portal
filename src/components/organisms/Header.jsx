@@ -8,7 +8,7 @@ const Header = ({ userType = "client" }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  
+  const { logout } = useContext(AuthContext);
   const navigation = userType === "client" 
     ? [
         { name: "Dashboard", href: "/", icon: "LayoutDashboard" },
@@ -74,10 +74,9 @@ const Header = ({ userType = "client" }) => {
               {userType === "client" ? "New Role" : "Complete Profile"}
             </Button>
             <Button
-              variant="ghost"
+variant="ghost"
               size="sm"
               onClick={() => {
-                const { logout } = useContext(AuthContext);
                 logout();
               }}
             >
@@ -128,12 +127,11 @@ const Header = ({ userType = "client" }) => {
                   <ApperIcon name="Plus" size={16} className="mr-2" />
                   {userType === "client" ? "New Role" : "Complete Profile"}
                 </Button>
-                <Button
+<Button
                   variant="ghost"
                   size="sm"
                   className="w-full"
                   onClick={() => {
-                    const { logout } = useContext(AuthContext);
                     setIsMobileMenuOpen(false);
                     logout();
                   }}
