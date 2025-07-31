@@ -5,7 +5,7 @@ class MatchService {
   }
 
   // Initialize ApperClient
-getApperClient() {
+  getApperClient() {
     const { ApperClient } = window.ApperSDK;
     return new ApperClient({
       apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
@@ -27,7 +27,7 @@ getApperClient() {
       }
     });
     
-return prepared;
+    return prepared;
   }
 
   async getAll() {
