@@ -12,13 +12,18 @@ import ApperIcon from "@/components/ApperIcon";
 import { roleService } from "@/services/api/roleService";
 import { vaProfileService } from "@/services/api/vaProfileService";
 import { matchService } from "@/services/api/matchService";
-
+import { vaAssignmentService } from "@/services/api/vaAssignmentService";
+import { vaTrainingService } from "@/services/api/vaTrainingService";
+import { vaCheckInService } from "@/services/api/vaCheckInService";
 const Dashboard = ({ userType = "client" }) => {
   const navigate = useNavigate();
-  const [data, setData] = useState({
+const [data, setData] = useState({
     roles: [],
     profile: null,
     matches: [],
+    assignments: [],
+    training: [],
+    checkIns: [],
     stats: {}
   });
   const [loading, setLoading] = useState(true);
@@ -33,20 +38,59 @@ const Dashboard = ({ userType = "client" }) => {
       setLoading(true);
       setError("");
       
-      if (userType === "client") {
-        const [roles, matches] = await Promise.all([
+if (userType === "client") {
+        const [roles, matches, assignments] = await Promise.all([
           roleService.getAll(),
-          matchService.getAll()
+          matchService.getAll(),
+          vaAssignmentService.getByClientId("client-1")
         ]);
+        
+        // Get VA profiles for assigned VAs
+        const vaIds = assignments.map(a => a.vaId);
+        const vaProfiles = await Promise.all(
+          vaIds.map(id => vaProfileService.getById(id))
+        );
+        
+        // Get training data for assigned VAs
+        const trainingData = await Promise.all(
+          vaIds.map(id => vaTrainingService.getByVAId(id))
+        );
+        const allTraining = trainingData.flat();
+        
+        // Get recent check-ins for assigned VAs
+        const recentCheckIns = await vaCheckInService.getRecentByVAIds(vaIds, 7);
+        
+        // Enhance assignments with VA profile data
+        const enhancedAssignments = assignments.map(assignment => {
+          const vaProfile = vaProfiles.find(p => p.Id === assignment.vaId);
+          const vaTraining = allTraining.filter(t => t.vaId === assignment.vaId);
+          const vaCheckIns = recentCheckIns.filter(c => c.vaId === assignment.vaId);
+          
+          return {
+            ...assignment,
+            vaProfile,
+            training: vaTraining,
+            recentCheckIns: vaCheckIns
+          };
+        });
         
         const stats = {
           totalRoles: roles.length,
           activeRoles: roles.filter(r => r.status === "active").length,
           totalMatches: matches.length,
-          pendingMatches: matches.filter(m => m.status === "pending").length
+          pendingMatches: matches.filter(m => m.status === "pending").length,
+          totalVAs: assignments.length,
+          activeTraining: allTraining.filter(t => t.status === "in-progress").length
         };
         
-        setData({ roles: roles.slice(0, 5), matches: matches.slice(0, 5), stats });
+        setData({ 
+          roles: roles.slice(0, 5), 
+          matches: matches.slice(0, 5), 
+          assignments: enhancedAssignments,
+          training: allTraining,
+          checkIns: recentCheckIns,
+          stats 
+        });
       } else {
         const [profile, matches] = await Promise.all([
           vaProfileService.getById("va-1"),
@@ -297,7 +341,161 @@ const Dashboard = ({ userType = "client" }) => {
                 </div>
               ))
             )}
+</div>
+        </Card>
+
+        {/* Your Virtual Assistants */}
+        <Card>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-secondary">Your Virtual Assistants</h2>
+            <Button variant="outline" size="sm" onClick={() => navigate('/matches')}>
+              <ApperIcon name="Users" size={16} />
+              View All VAs
+            </Button>
           </div>
+          
+          {data.assignments.length === 0 ? (
+            <Empty 
+              icon="Users"
+              title="No VAs Assigned"
+              description="You don't have any virtual assistants assigned yet."
+            />
+          ) : (
+            <div className="space-y-4">
+              {data.assignments.map((assignment) => (
+                <div key={assignment.Id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                        <ApperIcon name="User" size={20} className="text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-secondary">{assignment.vaProfile?.name}</h3>
+                        <p className="text-sm text-gray-600">{assignment.vaProfile?.email}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <StatusBadge status={assignment.status} />
+                          <span className="text-xs text-gray-500">
+                            {assignment.weeklyHours}h/week • ${assignment.hourlyRate}/hr
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-600 mb-1">Profile Completion</div>
+                      <div className="flex items-center space-x-2">
+                        <Progress value={assignment.vaProfile?.completionStatus || 0} className="w-16" />
+                        <span className="text-sm font-medium">{assignment.vaProfile?.completionStatus || 0}%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Training Progress */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-secondary mb-2">Training Progress</h4>
+                    {assignment.training.length === 0 ? (
+                      <p className="text-sm text-gray-500">No training courses assigned</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {assignment.training.slice(0, 2).map((training) => (
+                          <div key={training.Id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                            <div>
+                              <p className="text-sm font-medium">{training.courseTitle}</p>
+                              <p className="text-xs text-gray-600">{training.provider}</p>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <StatusBadge status={training.status} />
+                              {training.status === 'in-progress' && (
+                                <div className="flex items-center space-x-1">
+                                  <Progress value={training.progress || 0} className="w-12" />
+                                  <span className="text-xs">{training.progress || 0}%</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        {assignment.training.length > 2 && (
+                          <p className="text-xs text-gray-500">
+                            +{assignment.training.length - 2} more courses
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Recent Check-ins */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-secondary mb-2">Recent Check-ins</h4>
+                    {assignment.recentCheckIns.length === 0 ? (
+                      <p className="text-sm text-gray-500">No recent check-ins</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {assignment.recentCheckIns.slice(0, 2).map((checkIn) => (
+                          <div key={checkIn.Id} className="p-2 bg-gray-50 rounded">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs text-gray-600">
+                                {new Date(checkIn.date).toLocaleDateString()}
+                              </span>
+                              <div className="flex items-center space-x-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {checkIn.hoursWorked}h worked
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {checkIn.mood}
+                                </Badge>
+                              </div>
+                            </div>
+                            <p className="text-sm">
+                              {checkIn.tasksCompleted.length} tasks completed
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Assigned Tasks */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-secondary mb-2">Assigned Tasks</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {assignment.assignedTasks.map((task, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {task}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-2 pt-2 border-t border-gray-200">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigate(`/profile/${assignment.vaId}`)}
+                    >
+                      <ApperIcon name="User" size={14} />
+                      View Profile
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigate(`/training/${assignment.vaId}`)}
+                    >
+                      <ApperIcon name="BookOpen" size={14} />
+                      Training
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigate(`/checkins/${assignment.vaId}`)}
+                    >
+                      <ApperIcon name="Calendar" size={14} />
+                      Check-ins
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
       
