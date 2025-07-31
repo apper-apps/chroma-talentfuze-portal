@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
@@ -7,9 +7,11 @@ import SkillRating from "@/components/molecules/SkillRating";
 import Progress from "@/components/atoms/Progress";
 import ApperIcon from "@/components/ApperIcon";
 import { vaProfileService } from "@/services/api/vaProfileService";
-
+import { vaCheckInService } from "@/services/api/vaCheckInService";
 const VAProfileForm = ({ profile, onSave }) => {
   const [loading, setLoading] = useState(false);
+  const [checkInLoading, setCheckInLoading] = useState(false);
+  const [todaysCheckIn, setTodaysCheckIn] = useState(null);
   const [formData, setFormData] = useState({
     name: profile?.name || "",
     email: profile?.email || "",
@@ -18,6 +20,14 @@ const VAProfileForm = ({ profile, onSave }) => {
     discType: profile?.discType || "",
     portfolioUrls: profile?.portfolioUrls || [""],
     skills: profile?.skills || {}
+  });
+  const [checkInData, setCheckInData] = useState({
+    hoursWorked: "",
+    tasksCompleted: [""],
+    challenges: "",
+    plannedTasks: [""],
+    mood: "productive",
+    productivity: 8
   });
   
   const discTypes = [
@@ -132,7 +142,88 @@ const VAProfileForm = ({ profile, onSave }) => {
     }
   };
   
-  const completionPercentage = calculateCompletionPercentage();
+const completionPercentage = calculateCompletionPercentage();
+  
+  useEffect(() => {
+    loadTodaysCheckIn();
+  }, []);
+  
+  const loadTodaysCheckIn = async () => {
+    try {
+      const checkIn = await vaCheckInService.getTodaysCheckIn(profile?.Id || 1);
+      if (checkIn) {
+        setTodaysCheckIn(checkIn);
+        setCheckInData({
+          hoursWorked: checkIn.hoursWorked.toString(),
+          tasksCompleted: checkIn.tasksCompleted,
+          challenges: checkIn.challenges,
+          plannedTasks: checkIn.plannedTasks,
+          mood: checkIn.mood,
+          productivity: checkIn.productivity
+        });
+      }
+    } catch (error) {
+      // No check-in today is fine
+    }
+  };
+  
+  const handleCheckInChange = (field, value) => {
+    setCheckInData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  const handleTaskChange = (index, value, type) => {
+    setCheckInData(prev => ({
+      ...prev,
+      [type]: prev[type].map((task, i) => i === index ? value : task)
+    }));
+  };
+  
+  const addTask = (type) => {
+    setCheckInData(prev => ({
+      ...prev,
+      [type]: [...prev[type], ""]
+    }));
+  };
+  
+  const removeTask = (index, type) => {
+    setCheckInData(prev => ({
+      ...prev,
+      [type]: prev[type].filter((_, i) => i !== index)
+    }));
+  };
+  
+  const handleCheckInSubmit = async (e) => {
+    e.preventDefault();
+    setCheckInLoading(true);
+    
+    try {
+      const checkInPayload = {
+        vaId: profile?.Id || 1,
+        hoursWorked: parseFloat(checkInData.hoursWorked),
+        tasksCompleted: checkInData.tasksCompleted.filter(task => task.trim()),
+        challenges: checkInData.challenges,
+        plannedTasks: checkInData.plannedTasks.filter(task => task.trim()),
+        mood: checkInData.mood,
+        productivity: checkInData.productivity
+      };
+      
+      if (todaysCheckIn) {
+        await vaCheckInService.update(todaysCheckIn.Id, checkInPayload);
+        toast.success("Daily check-in updated successfully!");
+      } else {
+        const savedCheckIn = await vaCheckInService.create(checkInPayload);
+        setTodaysCheckIn(savedCheckIn);
+        toast.success("Daily check-in submitted successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to submit check-in. Please try again.");
+    } finally {
+      setCheckInLoading(false);
+    }
+  };
   
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -312,8 +403,172 @@ const VAProfileForm = ({ profile, onSave }) => {
               </>
             )}
           </Button>
-        </div>
+</div>
       </form>
+      
+      {/* Daily Check-in Section */}
+      <Card>
+        <h2 className="text-lg font-semibold text-secondary mb-4">
+          Daily Check-in - {new Date().toLocaleDateString()}
+        </h2>
+        <p className="text-sm text-gray-600 mb-4">
+          {todaysCheckIn ? "Update your daily progress and activities." : "Submit your daily progress and activities."}
+        </p>
+        
+        <form onSubmit={handleCheckInSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              label="Hours Worked Today"
+              type="number"
+              step="0.5"
+              min="0"
+              max="24"
+              value={checkInData.hoursWorked}
+              onChange={(e) => handleCheckInChange('hoursWorked', e.target.value)}
+              placeholder="8.0"
+              required
+            />
+            
+            <FormField label="Mood/Energy Level">
+              <select
+                value={checkInData.mood}
+                onChange={(e) => handleCheckInChange('mood', e.target.value)}
+                className="flex w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-secondary focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              >
+                <option value="energetic">Energetic</option>
+                <option value="productive">Productive</option>
+                <option value="focused">Focused</option>
+                <option value="satisfied">Satisfied</option>
+                <option value="tired">Tired</option>
+                <option value="stressed">Stressed</option>
+              </select>
+            </FormField>
+          </div>
+          
+          <div>
+            <FormField
+              label={`Productivity Rating (${checkInData.productivity}/10)`}
+              className="mb-2"
+            />
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value={checkInData.productivity}
+              onChange={(e) => handleCheckInChange('productivity', parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>Low</span>
+              <span>High</span>
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-secondary mb-2">
+              Tasks Completed Today
+            </label>
+            <div className="space-y-2">
+              {checkInData.tasksCompleted.map((task, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <FormField
+                    value={task}
+                    onChange={(e) => handleTaskChange(index, e.target.value, 'tasksCompleted')}
+                    placeholder="Describe what you accomplished..."
+                    className="flex-1"
+                  />
+                  {checkInData.tasksCompleted.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeTask(index, 'tasksCompleted')}
+                    >
+                      <ApperIcon name="Trash2" size={16} />
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => addTask('tasksCompleted')}
+              >
+                <ApperIcon name="Plus" size={16} className="mr-2" />
+                Add Task
+              </Button>
+            </div>
+          </div>
+          
+          <FormField
+            label="Challenges or Issues"
+            value={checkInData.challenges}
+            onChange={(e) => handleCheckInChange('challenges', e.target.value)}
+            placeholder="Any difficulties or blockers you encountered..."
+            multiline
+            rows={3}
+          />
+          
+          <div>
+            <label className="block text-sm font-medium text-secondary mb-2">
+              Planned Tasks for Tomorrow
+            </label>
+            <div className="space-y-2">
+              {checkInData.plannedTasks.map((task, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <FormField
+                    value={task}
+                    onChange={(e) => handleTaskChange(index, e.target.value, 'plannedTasks')}
+                    placeholder="What do you plan to work on..."
+                    className="flex-1"
+                  />
+                  {checkInData.plannedTasks.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeTask(index, 'plannedTasks')}
+                    >
+                      <ApperIcon name="Trash2" size={16} />
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => addTask('plannedTasks')}
+              >
+                <ApperIcon name="Plus" size={16} className="mr-2" />
+                Add Task
+              </Button>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-end">
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={checkInLoading}
+              size="lg"
+            >
+              {checkInLoading ? (
+                <>
+                  <ApperIcon name="Loader2" size={16} className="mr-2 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <ApperIcon name="CheckCircle" size={16} className="mr-2" />
+                  {todaysCheckIn ? "Update Check-in" : "Submit Check-in"}
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </Card>
     </div>
   );
 };

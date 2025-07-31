@@ -19,9 +19,14 @@ class MatchService {
     return { ...match };
   }
 
-  async getMatchesForRole(roleId) {
+async getMatchesForRole(roleId) {
     await this.delay(250);
     return this.matches.filter(m => m.roleId === parseInt(roleId)).map(m => ({ ...m }));
+  }
+
+  async getMatchesForVA(vaId) {
+    await this.delay(250);
+    return this.matches.filter(m => m.vaId === parseInt(vaId)).map(m => ({ ...m }));
   }
 
   async getMatchesForVA(vaId) {

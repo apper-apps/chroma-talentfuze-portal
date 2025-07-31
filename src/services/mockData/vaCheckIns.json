@@ -1,0 +1,58 @@
+[
+  {
+    "Id": 1,
+    "vaId": 1,
+    "date": "2024-02-15T00:00:00Z",
+    "hoursWorked": 8,
+    "tasksCompleted": [
+      "Created 5 social media posts for Instagram",
+      "Responded to customer inquiries via email",
+      "Updated content calendar for next week"
+    ],
+    "challenges": "Had some difficulty with the new design software, but found tutorial videos helpful",
+    "plannedTasks": [
+      "Design Facebook ad graphics",
+      "Schedule social media posts",
+      "Prepare weekly report"
+    ],
+    "mood": "productive",
+    "productivity": 8
+  },
+  {
+    "Id": 2,
+    "vaId": 1,
+    "date": "2024-02-14T00:00:00Z",
+    "hoursWorked": 7.5,
+    "tasksCompleted": [
+      "Managed customer support tickets",
+      "Updated CRM with new leads",
+      "Completed training module on email marketing"
+    ],
+    "challenges": "No major challenges today",
+    "plannedTasks": [
+      "Continue social media content creation",
+      "Follow up on pending customer issues"
+    ],
+    "mood": "focused",
+    "productivity": 9
+  },
+  {
+    "Id": 3,
+    "vaId": 2,
+    "date": "2024-02-15T00:00:00Z",
+    "hoursWorked": 8,
+    "tasksCompleted": [
+      "Processed 45 customer support tickets",
+      "Updated customer database",
+      "Conducted follow-up calls with 3 clients"
+    ],
+    "challenges": "High volume of tickets today, but managed to stay on top of everything",
+    "plannedTasks": [
+      "Complete CRM training module",
+      "Prepare weekly customer satisfaction report",
+      "Set up new email templates"
+    ],
+    "mood": "satisfied",
+    "productivity": 8
+  }
+]

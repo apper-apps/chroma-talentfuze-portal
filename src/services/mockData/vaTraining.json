@@ -1,0 +1,57 @@
+[
+  {
+    "Id": 1,
+    "vaId": 1,
+    "courseTitle": "Advanced Social Media Marketing",
+    "provider": "TalentFuze Academy",
+    "status": "completed",
+    "completionDate": "2024-01-10T00:00:00Z",
+    "duration": 20,
+    "certificateUrl": "https://certificates.talentfuze.com/maria-1",
+    "skills": ["Social Media Management", "Facebook Ads", "Instagram Marketing"]
+  },
+  {
+    "Id": 2,
+    "vaId": 1,
+    "courseTitle": "Customer Service Excellence",
+    "provider": "Professional Development Corp",
+    "status": "in-progress",
+    "startDate": "2024-02-01T00:00:00Z",
+    "duration": 15,
+    "progress": 60,
+    "skills": ["Customer Support", "Communication"]
+  },
+  {
+    "Id": 3,
+    "vaId": 2,
+    "courseTitle": "CRM Management Fundamentals",
+    "provider": "TalentFuze Academy",
+    "status": "completed",
+    "completionDate": "2024-01-25T00:00:00Z",
+    "duration": 12,
+    "certificateUrl": "https://certificates.talentfuze.com/john-1",
+    "skills": ["CRM Management", "Data Management"]
+  },
+  {
+    "Id": 4,
+    "vaId": 2,
+    "courseTitle": "Advanced Email Marketing",
+    "provider": "Marketing Institute",
+    "status": "enrolled",
+    "startDate": "2024-02-15T00:00:00Z",
+    "duration": 18,
+    "progress": 0,
+    "skills": ["Email Marketing", "Marketing Automation"]
+  },
+  {
+    "Id": 5,
+    "vaId": 3,
+    "courseTitle": "UI/UX Design Principles",
+    "provider": "Design Academy",
+    "status": "completed",
+    "completionDate": "2024-01-20T00:00:00Z",
+    "duration": 25,
+    "certificateUrl": "https://certificates.designacademy.com/sarah-1",
+    "skills": ["UI/UX Design", "User Research"]
+  }
+]

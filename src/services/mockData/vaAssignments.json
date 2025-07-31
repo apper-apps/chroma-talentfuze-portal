@@ -1,0 +1,47 @@
+[
+  {
+    "Id": 1,
+    "clientId": "client-1",
+    "vaId": 1,
+    "roleId": 1,
+    "status": "active",
+    "startDate": "2024-01-15T00:00:00Z",
+    "assignedTasks": [
+      "Social Media Management",
+      "Content Creation",
+      "Customer Support"
+    ],
+    "weeklyHours": 30,
+    "hourlyRate": 12.50
+  },
+  {
+    "Id": 2,
+    "clientId": "client-1",
+    "vaId": 2,
+    "roleId": 2,
+    "status": "active",
+    "startDate": "2024-01-20T00:00:00Z",
+    "assignedTasks": [
+      "Customer Support",
+      "Email Management",
+      "Administrative Tasks"
+    ],
+    "weeklyHours": 40,
+    "hourlyRate": 9.38
+  },
+  {
+    "Id": 3,
+    "clientId": "client-2",
+    "vaId": 3,
+    "roleId": 6,
+    "status": "active",
+    "startDate": "2/1/2024 12:00:00 AMZ",
+    "assignedTasks": [
+      "Graphic Design",
+      "Brand Design",
+      "Web Design"
+    ],
+    "weeklyHours": 25,
+    "hourlyRate": 16.00
+  }
+]
