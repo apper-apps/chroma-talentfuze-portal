@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1,
+    "clientId": "client-1",
+    "title": "Social Media Manager",
+    "salaryMin": 800,
+    "salaryMax": 1200,
+    "requiredSkills": ["Social Media Management", "Content Creation", "Facebook Ads", "Instagram Marketing", "Canva"],
+    "experienceLevel": "mid",
+    "description": "We're looking for a creative Social Media Manager to develop and implement our social media strategy. You'll be responsible for creating engaging content, managing our social media accounts, and running paid advertising campaigns across multiple platforms.",
+    "status": "active",
+    "createdAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "clientId": "client-1",
+    "title": "Customer Support Specialist",
+    "salaryMin": 600,
+    "salaryMax": 900,
+    "requiredSkills": ["Customer Support", "Email Management", "Live Chat", "CRM Management", "Problem Solving"],
+    "experienceLevel": "entry",
+    "description": "Join our customer support team to help customers with inquiries and provide excellent service. You'll handle support tickets, live chat, and maintain customer satisfaction through professional communication.",
+    "status": "active",
+    "createdAt": "2024-01-20T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "clientId": "client-1",
+    "title": "E-commerce Assistant",
+    "salaryMin": 700,
+    "salaryMax": 1100,
+    "requiredSkills": ["Shopify", "Product Listing", "Order Management", "Inventory Management", "Customer Service"],
+    "experienceLevel": "mid",
+    "description": "We need an experienced E-commerce Assistant to manage our online store operations. Responsibilities include product listings, order processing, inventory management, and customer inquiries.",
+    "status": "pending",
+    "createdAt": "2024-01-25T09:15:00Z"
+  },
+  {
+    "Id": 4,
+    "clientId": "client-1",
+    "title": "Content Writer",
+    "salaryMin": 900,
+    "salaryMax": 1400,
+    "requiredSkills": ["Copywriting", "Blog Writing", "SEO", "Content Strategy", "Research"],
+    "experienceLevel": "mid",
+    "description": "Looking for a talented Content Writer to create engaging blog posts, articles, and marketing copy. You should have excellent writing skills and understanding of SEO best practices.",
+    "status": "active",
+    "createdAt": "2024-02-01T11:45:00Z"
+  },
+  {
+    "Id": 5,
+    "clientId": "client-1",
+    "title": "Virtual Executive Assistant",
+    "salaryMin": 1000,
+    "salaryMax": 1600,
+    "requiredSkills": ["Administrative Tasks", "Email Management", "Calendar Management", "Project Management", "Research"],
+    "experienceLevel": "senior",
+    "description": "Seeking a highly organized Virtual Executive Assistant to support our leadership team. You'll manage calendars, coordinate meetings, handle correspondence, and assist with various administrative tasks.",
+    "status": "active",
+    "createdAt": "2024-02-05T16:20:00Z"
+  },
+  {
+    "Id": 6,
+    "clientId": "client-1",
+    "title": "Graphic Designer",
+    "salaryMin": 800,
+    "salaryMax": 1300,
+    "requiredSkills": ["Graphic Design", "Adobe Photoshop", "Adobe Illustrator", "Canva", "Brand Design"],
+    "experienceLevel": "mid",
+    "description": "We're looking for a creative Graphic Designer to create visual content for our marketing campaigns. You'll design social media graphics, marketing materials, and brand assets.",
+    "status": "draft",
+    "createdAt": "2024-02-08T13:10:00Z"
+  }
+]

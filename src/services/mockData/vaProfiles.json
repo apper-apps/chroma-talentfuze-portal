@@ -1,0 +1,122 @@
+[
+  {
+    "Id": 1,
+    "name": "Maria Santos",
+    "email": "maria.santos@email.com",
+    "resumeUrl": "https://example.com/maria-resume.pdf",
+    "portfolioUrls": ["https://mariasantos.com", "https://behance.net/mariasantos"],
+    "skills": {
+      "Social Media Management": 5,
+      "Content Creation": 4,
+      "Facebook Ads": 4,
+      "Instagram Marketing": 5,
+      "Canva": 5,
+      "Email Marketing": 3,
+      "Customer Support": 4
+    },
+    "discType": "I",
+    "experience": "mid",
+    "salaryExpectation": 1000,
+    "completionStatus": 95
+  },
+  {
+    "Id": 2,
+    "name": "John Rodriguez",
+    "email": "john.rodriguez@email.com",
+    "resumeUrl": "https://example.com/john-resume.pdf",
+    "portfolioUrls": ["https://johnrodriguez.dev"],
+    "skills": {
+      "Customer Support": 5,
+      "Email Management": 5,
+      "Live Chat": 4,
+      "CRM Management": 4,
+      "Problem Solving": 5,
+      "Administrative Tasks": 4,
+      "Data Entry": 5
+    },
+    "discType": "S",
+    "experience": "entry",
+    "salaryExpectation": 750,
+    "completionStatus": 90
+  },
+  {
+    "Id": 3,
+    "name": "Sarah Kim",
+    "email": "sarah.kim@email.com",
+    "resumeUrl": "https://example.com/sarah-resume.pdf",
+    "portfolioUrls": ["https://sarahkim.design", "https://dribbble.com/sarahkim"],
+    "skills": {
+      "Graphic Design": 5,
+      "Adobe Photoshop": 5,
+      "Adobe Illustrator": 4,
+      "Canva": 5,
+      "Brand Design": 4,
+      "Web Design": 3,
+      "UI/UX Design": 3
+    },
+    "discType": "C",
+    "experience": "mid",
+    "salaryExpectation": 1100,
+    "completionStatus": 100
+  },
+  {
+    "Id": 4,
+    "name": "Michael Chen",
+    "email": "michael.chen@email.com",
+    "resumeUrl": "https://example.com/michael-resume.pdf",
+    "portfolioUrls": ["https://michaelchen.com"],
+    "skills": {
+      "Shopify": 5,
+      "Product Listing": 5,
+      "Order Management": 4,
+      "Inventory Management": 4,
+      "Customer Service": 4,
+      "Amazon FBA": 3,
+      "Data Entry": 5
+    },
+    "discType": "D",
+    "experience": "mid",
+    "salaryExpectation": 950,
+    "completionStatus": 85
+  },
+  {
+    "Id": 5,
+    "name": "Jessica Thompson",
+    "email": "jessica.thompson@email.com",
+    "resumeUrl": "https://example.com/jessica-resume.pdf",
+    "portfolioUrls": ["https://jessicawrites.com", "https://medium.com/@jessicathompson"],
+    "skills": {
+      "Copywriting": 5,
+      "Blog Writing": 5,
+      "SEO": 4,
+      "Content Strategy": 4,
+      "Research": 5,
+      "Email Marketing": 3,
+      "Social Media Management": 3
+    },
+    "discType": "I",
+    "experience": "mid",
+    "salaryExpectation": 1200,
+    "completionStatus": 95
+  },
+  {
+    "Id": 6,
+    "name": "David Wilson",
+    "email": "david.wilson@email.com",
+    "resumeUrl": "https://example.com/david-resume.pdf",
+    "portfolioUrls": ["https://davidwilson.pro"],
+    "skills": {
+      "Administrative Tasks": 5,
+      "Email Management": 5,
+      "Calendar Management": 5,
+      "Project Management": 4,
+      "Research": 5,
+      "Data Entry": 4,
+      "CRM Management": 4
+    },
+    "discType": "C",
+    "experience": "senior",
+    "salaryExpectation": 1400,
+    "completionStatus": 100
+  }
+]

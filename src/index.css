@@ -1,0 +1,87 @@
+@import 'react-toastify/dist/ReactToastify.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .font-display {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  
+  .font-body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer components {
+  .gradient-primary {
+    background: linear-gradient(135deg, #5B4FF0 0%, #00D4AA 100%);
+  }
+  
+  .gradient-secondary {
+    background: linear-gradient(135deg, #1A1B3A 0%, #5B4FF0 100%);
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, #5B4FF0 0%, #00D4AA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .card-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .card-shadow-hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* Toast customization */
+.Toastify__toast-container {
+  width: 320px;
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  border-radius: 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+}
+
+.Toastify__toast--success {
+  background-color: #00C48C;
+}
+
+.Toastify__toast--error {
+  background-color: #FF3B30;
+}
+
+.Toastify__toast--warning {
+  background-color: #FFB800;
+}
+
+.Toastify__toast--info {
+  background-color: #0084FF;
+}
